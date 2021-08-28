@@ -2,6 +2,11 @@
 #include <time.h>
 #include <stdio.h>
 
+/**
+ * main - get random int and print whether it's pos, neg, or zero
+ *
+ * Return: 0 always
+ */
 int main(void)
 {
 	int n;
