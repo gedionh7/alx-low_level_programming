@@ -1,1 +1,1 @@
-<font size="1"> DEBUGING_FUNCTIONS <font>
+<font size="5"> DEBUGING_FUNCTIONS <font>
