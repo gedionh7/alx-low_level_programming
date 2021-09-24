@@ -1,137 +1,103 @@
-#include "main.h"
-#include <stdio.h>
+#include "holberton.h"
 #include <stdlib.h>
+#include <stdio.h>
+#include <ctype.h>
+
 /**
-  * int_calloc - special calloc but 4 int arrays
-  * @nmemb: n memb
-  * @size: size of array
-  * Return: int *
-  */
-int *int_calloc(int nmemb, unsigned int size)
+ * _strlen - returns the length of a string
+ * @s: char to check
+ * Return: length
+ */
+
+int _strlen(char *s)
 {
-	/* declarations */
-	int *p, n;
-	/* checking inputs */
-	if (nmemb == 0 || size == 0)
-		return (NULL);
-	/* malloc the space & check for fail */
-	p = malloc(nmemb * size);
-	if (p == NULL)
-		return (NULL);
-	/* calloc */
-	for (n = 0; n < nmemb; n++)
-		p[n] = 0;
-	return (p);
+	int count = 0;
+
+	while (*s)
+	{
+		s++;
+		count++;
+	}
+	return (count);
 }
 
 /**
-  * mul - multiplication
-  * @mul: int * 4 answer
-  * @num1: string num1
-  * @num2: string num2
-  * @len1: len num1
-  * @len2: len num2
-  * Return: void
-  */
-void mul(int *mul, char *num1, char *num2, int len1, int len2)
+ * multiplier - multiply the strings and check ifdigits
+ * @s1: 1st string to multiply
+ * @s2: 2nd string to multiply
+ * Return: result
+ */
+
+char *multiplier(char *s1, char *s2) /* Courtesy of Arthur Damm */
 {
-	/* declarations */
-	int i;
-	int j;
-	int f1, f2;
-	int sum;
-	/* the long math */
-	for (i = len1 - 1; i >= 0; i--)
+	char *result;
+	int x, y, z, l1, l2, length;
+
+	l1 = _strlen(s1);
+	l2 = _strlen(s2);
+
+	result = malloc(_strlen(s1) + _strlen(s2));
+	if (result == 0)
+		printf("Error\n"), exit(98);
+	while (length--)
+		result[length] = 0;
+	for (l1--; l1 >= 0; l1--)
 	{
-		sum = 0;
-		f1 = num1[i] - '0';
-		for (j = len2 - 1; j >= 0; j--)
+		if (!isdigit(s1[l1]))
 		{
-			f2 = num2[j] - '0';
-			sum += mul[i + j + 1] + (f1 * f2);
-			mul[i + j + 1] = sum % 10;
-			sum /= 10;
+			free(result);
+			printf("Error\n"), exit(98);
 		}
-		if (sum > 0)
-			mul[i + j + 1] += sum;
+		x = s1[l1] - '0';
+		z = 0;
+		for (l2--; l2 >= 0; l2--)
+		{
+			if (!isdigit(s2[l2]))
+			{
+				free(result);
+				printf("Error\n"), exit(98);
+			}
+			y = s2[l2] - '0';
+			z += result[l1 + l2 + 1] + (x * y);
+			result[l1 + l2 + 1] = z % 10;
+			z /= 10;
+		}
+		if (z)
+			result[l1 + l2 + 1] += z;
 	}
-	for (i = 0; mul[i] == 0 && i < len1 + len2; i++)
-	{}
-	if (i == len1 + len2)
-		_putchar('0');
-	for (; i < len1 + len2; i++)
-		_putchar(mul[i] + '0');
-	_putchar('\n');
+	return (result);
 }
 
 /**
-  * is_valid - is the number a valid one
-  * @num : char string num
-  * Return: int, 1 if true 0 if false
-  */
-int is_valid(char *num)
+ * main - multiplies two positive numbers
+ * @argc: first number
+ * @argv: second number
+ * Return: 0
+ */
+
+int main(int argc, char *argv[])
 {
-	/* declarations */
-	int i;
-	/* checking for ints */
-	for (i = 0; num[i]; i++)
-	{
-		if (num[i] < '0' || num[i] > '9')
-			return (0);
-	}
-	return (1);
-}
-/**
-  * err - errors r us
-  * @status: error code 4 exit
-  * Return: void
-  */
-void err(int status)
-{
-	_putchar('E');
-	_putchar('r');
-	_putchar('r');
-	_putchar('o');
-	_putchar('r');
-	_putchar('\n');
-	exit(status);
-}
-/**
-  * main - getting the args
-  * @argc: args #
-  * @argv: arg array
-  * Return: 0
-  */
-int main(int argc, char **argv)
-{
-	/* declarations */
-	int i, j, len1 = 0, len2 = 0;
-	int *res;
-	/* too many args? too few? */
+	int i, x, length = 0;
+	char *result;
+
 	if (argc != 3)
 	{
-		err(98);
+		printf("Error\n"), exit(98);
 	}
-	/* using isvalid */
-	for (i = 1; i < argc; i++)
+
+	length = _strlen(argv[1]) + _strlen(argv[2]);
+	result = multiplier(argv[1], argv[2]);
+	x = 0;
+	for (i = 0; i < length; i++)
 	{
-		if (!(is_valid(argv[i])))
-			err(98);
-		if (i == 1)
-		{
-			for (j = 0; argv[i][j]; j++)
-				len1++;
-		}
-		if (i == 2)
-		{
-			for (j = 0; argv[i][j]; j++)
-				len2++;
-		}
+		if (result[i])
+			x = 1;
+		if (x)
+			_putchar(result[i] + '0');
 	}
-	res = int_calloc(len1 + len2, sizeof(int));
-	if (res == NULL)
-		err(98);
-	mul(res, argv[1], argv[2], len1, len2);
-	free(res);
+	if (x == 0)
+		_putchar('0');
+	_putchar('\n');
+	free(result);
 	return (0);
 }
